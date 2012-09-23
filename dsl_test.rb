@@ -19,7 +19,7 @@ class Candidate
   end
 
   def old?
-    !self.young
+    !self.young?
   end
 end
 
@@ -43,12 +43,14 @@ specify Candidate do
 
   she "should be young and motivated"  do
     @c = Candidate.new
+    @c.name = "Anonymous"
     @c.age = 30
-    @c.should be_young
+    @c.should_not be_old
   end
 
   she "should be able to write very fast" do
     @s = Secretary.new
+    @s.name = "Kelly"
     @s.age = 23
     @s.signs_per_minute = 320
     @s.should be_fast_writing
@@ -56,8 +58,15 @@ specify Candidate do
 
   he "should be a clever developer" do
     @d = Developer.new
+    @d.name = "Arnie"
     @d.programming_languages = %w[VisualBasic DotNet]
     @d.should be_clever
   end
 
+  he "should be a clever developer" do
+    @d = Developer.new
+    @d.name = "LuckyLuke"
+    @d.programming_languages = %w[VisualBasic DotNet]
+    @d.should be_clever
+  end
 end

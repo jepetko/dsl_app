@@ -53,9 +53,9 @@ def inject_sugar(clazz)
 
     msg = "#{real_instance_method_name} SHOULD BE #{val}"
     if real_instance_method.call == val
-      "SUITABLE   : " + msg
+      "SUITABLE    : " + msg
     else
-      "NO SUITABLE: " + msg
+      "NOT SUITABLE: " + msg
     end
   end
 
