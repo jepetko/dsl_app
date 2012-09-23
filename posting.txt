@@ -1,0 +1,159 @@
+
+I have been learning Ruby for 2-3 months. At the beginning, I was very shocked by some approaches being used there.
+But in the last time I'm very excited about the powerful meta-programming features working very reliable. By the way, few years ago, I tried to
+ explain people how difficult is it to deal with such dynamic languages like Javascript (and other ones as well) and how lucky are Java programmers
+  because of having a compiler.
+
+  I think I have to audit my opinion since I made some experiments with Rails and I was surprised about beauty ActiveRecord and RSpec. The latter one
+   emphasizes the power of Ruby regarding defining one's own Domain Specific Language. I got very curious and spent some time with exploring several
+   Ruby mechanisms which make possible constructs like:
+
+
+   describe Something do
+    it "should be possible!" do
+        ...
+    end
+   end
+
+
+   I decided to write my own DSL in order to learn more about the mechanism making this possible.
+
+   I had some knowledge about methods and blocks so that it wasn't difficult to guess that there are two (global?) methods being used as keywords
+   (from user's point of view):
+   describe
+   it
+
+   Everything that follows the (built-in) keywork "do" is a block.
+
+   After a while I had an idea about define DSL that can support in choosing an appropriate candidate for a job ;-).
+
+   To avoid some conficts to RSpec I selected different "keywords". The usage of that resulting (small and humble) framework should look like this:
+
+   specify Candidate do
+
+     she "should be young and motivated"  do
+       @c = Candidate.new
+       @c.name = "Anonymous"
+       @c.age = 30
+       @c.should_not be_old
+     end
+
+   end
+
+ After a couple hours I was done with that. The framework doing that consists of 70 (!) lines of code (including empty lines). And I'm sure that there are
+ many developers who are able to provider a better solution. But for now, I'm very satisfied with this solution.
+
+ Let's take a look at the architecture:
+
+ Implementing "specify":
+
+ The (global?) method specify is able to process a "thing" that normally is (and must be in this implementation) a Class object. The argument thing and the passed block
+ are stored in a global variable @things. Consider that the block is converted into a Proc object to be evaluated later (well-known as Deferred Evaluation).
+
+ def specify(thing, *args, &block)
+  if( defined? thing != nil && thing.class == Class )
+    @things[thing] = Proc.new(&block)
+    inject_sugar thing
+  else
+    raise "#{thing} isn't suitable for 'specify'"
+  end
+
+  @things.each do |k,v|
+    k.instance_eval &v
+    k.descs.each do |key,val|
+      ret = k.instance_eval &val
+      puts "#{key} \n \t *#{ret}"
+    end
+  end
+end
+
+Every time when something is "specified" by the method "specify" all the specifications are stored in a Hash and finally evaluated in context of the class.
+ The nested "he"/"she" keywords are evaluated in context of the class as well (see the nested loop). Why? If you consider the snippet demonstrating the usage of that
+ you can see that we invoke method called be_old. But this method doesn't exist at all. Method invocations looking like "be_old" does are sometimes describe as
+ "Class Macros" (see also Metaprogramming Ruby Book by Paolo Perotta). So I thought it's a good idea to evaluate the nested he/she blocks in Class's scope as well.
+
+ Implementing "he"/"she":
+
+ That is pretty simple. Since, the block passed in "specify" is evaluated in scope of the Class Candidate, the keyword "self" is the Class itself when Ruby
+  enters "he" or "she". So we have the opportunity to use the beautyful syntax of << operator when defining singleton attributes.
+  As you can see the Class itself (here: Candidate) has got a new Hash attribute. Here is where the mapping of descriptions ("should be young and motivated") and
+  Procs (for deferred evaluation) is stored.
+
+ def he(desc, *args, &block)
+   person(desc, *args, &block);
+ end
+
+ def she(desc, *args, &block)
+   person(desc, *args, &block);
+ end
+
+ def person(desc, *args, &block)
+    class << self
+     attr_accessor :descs
+   end
+   self.descs = {} if self.descs.nil?
+   self.descs[desc] = Proc.new(&block)
+ end
+
+Note: "he" and "she" have the same method body (just for simplicity and not to be sexistic ;-)).
+
+Implementing "inject_sugar":
+
+Maybe this is the most puzzling part of the solution but this is what metaprogramming is about: writing code that writes code.
+This is how methods like should, should_not, be_old ... are born.
+
+The method "inject_sugar" is defined in the same scope like "specify". It receives the Class itself as argument. This is necessary for defining some
+syntactic sugar like new instance and class methods are.
+
+The methods "be_old", "be_young",... are executed in the Class's scope and they aren't defined. So we'll need a mechanism that is able to catch invalid method invocations silently.
+This is what method_missing is for. Note: we could get a rid of that when using ":be_old" or "be_old" instead but we do that the same way like RSpec does ;-)
+My implementation of method_missing returns the name of the method itself. After all the return value of "be_old" is passed as argument for should and should_not.
+
+The "should" and "should_not" methods are defined as instance methods at runtime by calling Ruby's "send" method:
+
+  clazz.send(:define_method, 'should') do |*args|
+    args << true
+    self.validate(*args)
+  end
+
+  clazz.send(:define_method, 'should_not') do |*args|
+    args << false
+    self.validate(*args)
+  end
+
+
+  The only difference among them is that an additional parameter (true or false) is added because "should" checks for "true" and "should_not" checks for false.
+
+  The "validate" method detects the real instance method name. The create class macro "be_old" gets object's method "old?", "be_young" get's "young?" and so on.
+
+  Depending on the final check the method returns "SUITABLE..." or "NOT SUITABLE...". Remember the dealing with deferred evaluation insid "specify". This is the place
+  in where the return value is processed by Ruby's "puts".
+
+
+   def validate(*args)
+      target_method, val = *args
+      underline_pos = target_method.to_s.index('_')
+      raise "call #{target_method.to_s.inspect} not supported" if underline_pos.nil?
+      underline_pos += 1
+      real_instance_method_name = target_method.to_s[underline_pos..-1]
+      real_instance_method = self.method "#{real_instance_method_name}?"
+
+      msg = "#{real_instance_method_name} SHOULD BE #{val}"
+      if real_instance_method.call == val
+        "SUITABLE    : " + msg
+      else
+        "NOT SUITABLE: " + msg
+      end
+    end
+
+
+
+
+
+
+
+
+
+
+
+
