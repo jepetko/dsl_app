@@ -39,15 +39,17 @@ end
 
 #####################################
 
-specify Candidate do
 
+specify Candidate do
   she "should be young and motivated"  do
     @c = Candidate.new
     @c.name = "Anonymous"
     @c.age = 30
     @c.should_not be_old
   end
+end
 
+specify Secretary do
   she "should be able to write very fast" do
     @s = Secretary.new
     @s.name = "Kelly"
@@ -55,18 +57,18 @@ specify Candidate do
     @s.signs_per_minute = 320
     @s.should be_fast_writing
   end
+end
 
+specify Developer do
   he "should be a clever developer" do
     @d = Developer.new
     @d.name = "Arnie"
-    @d.programming_languages = %w[VisualBasic DotNet]
+    @d.programming_languages = %w[VisualBasic C#]
     @d.should be_clever
-  end
 
-  he "should be a clever developer" do
-    @d = Developer.new
-    @d.name = "LuckyLuke"
-    @d.programming_languages = %w[VisualBasic DotNet]
-    @d.should be_clever
+    @d2 = Developer.new
+    @d2.name = "LuckyLuke"
+    @d2.programming_languages = %w[Ruby Javascript]
+    @d2.should be_clever
   end
 end

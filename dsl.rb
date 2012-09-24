@@ -3,6 +3,13 @@
 def specify(thing, *args, &block)
   if( defined? thing != nil && thing.class == Class )
     @things[thing] = Proc.new(&block)
+
+    class << thing
+      attr_accessor :descs
+      attr_accessor :results
+    end
+    thing.descs = {} if thing.descs.nil?
+    thing.results = [] if thing.results.nil?
     inject_sugar thing
   else
     raise "#{thing} isn't suitable for 'specify'"
@@ -11,10 +18,16 @@ def specify(thing, *args, &block)
   @things.each do |k,v|
     k.instance_eval &v
     k.descs.each do |key,val|
-      ret = k.instance_eval &val
-      puts "#{key} \n \t *#{ret}"
+      #print the description
+      puts key.inspect
+      k.instance_eval &val
+    end
+    #print the result of should/should_not
+    k.results.each do |val|
+      puts "\t * #{val}"
     end
   end
+  @things.clear
 end
 
 def he(desc, *args, &block)
@@ -26,10 +39,6 @@ def she(desc, *args, &block)
 end
 
 def person(desc, *args, &block)
-   class << self
-    attr_accessor :descs
-  end
-  self.descs = {} if self.descs.nil?
   self.descs[desc] = Proc.new(&block)
 end
 
@@ -53,9 +62,9 @@ def inject_sugar(clazz)
 
     msg = "#{real_instance_method_name} SHOULD BE #{val}"
     if real_instance_method.call == val
-      "SUITABLE    : " + msg
+      self.class.results << ("SUITABLE    : " + msg + "\n\t\t\t for " + self.inspect )
     else
-      "NOT SUITABLE: " + msg
+      self.class.results << ("NOT SUITABLE: " + msg + "\n\t\t\t for " + self.inspect )
     end
   end
 
