@@ -22,7 +22,7 @@
       <file leaf-file-name="dsl.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dsl.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="49" selection-start="664" selection-end="664" vertical-scroll-proportion="0.0">
+            <state line="31" column="0" selection-start="691" selection-end="1327" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -49,10 +49,8 @@
       <file leaf-file-name="dsl_test.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dsl_test.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="23" selection-start="334" selection-end="334" vertical-scroll-proportion="0.41980624">
-              <folding>
-                <marker date="1348475272000" expanded="true" signature="1009:1328" placeholder="=begin ... =end" />
-              </folding>
+            <state line="27" column="15" selection-start="376" selection-end="376" vertical-scroll-proportion="0.43595263">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -70,8 +68,8 @@
         <option value="$PROJECT_DIR$/Gemfile" />
         <option value="$PROJECT_DIR$/rspec/dsl_spec.rb" />
         <option value="$PROJECT_DIR$/posting.txt" />
-        <option value="$PROJECT_DIR$/dsl_test.rb" />
         <option value="$PROJECT_DIR$/dsl.rb" />
+        <option value="$PROJECT_DIR$/dsl_test.rb" />
       </list>
     </option>
   </component>
@@ -308,9 +306,7 @@
     <entry file="file://$PROJECT_DIR$/dsl_test.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="42" column="24" selection-start="668" selection-end="668" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1348475272000" expanded="true" signature="1009:1328" placeholder="=begin ... =end" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -337,17 +333,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dsl.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="49" selection-start="664" selection-end="664" vertical-scroll-proportion="0.0">
+        <state line="31" column="0" selection-start="691" selection-end="1327" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dsl_test.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="23" selection-start="334" selection-end="334" vertical-scroll-proportion="0.41980624">
-          <folding>
-            <marker date="1348475272000" expanded="true" signature="1009:1328" placeholder="=begin ... =end" />
-          </folding>
+        <state line="27" column="15" selection-start="376" selection-end="376" vertical-scroll-proportion="0.43595263">
+          <folding />
         </state>
       </provider>
     </entry>

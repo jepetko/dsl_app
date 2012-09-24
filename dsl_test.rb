@@ -1,5 +1,10 @@
 require_relative "dsl.rb"
 
+####################################
+#
+# class to be tested
+#
+####################################
 class Candidate
 
   attr_accessor :age
@@ -23,6 +28,11 @@ class Candidate
   end
 end
 
+####################################
+#
+# class to be tested
+#
+####################################
 class Secretary < Candidate
   attr_accessor :signs_per_minute
   def fast_writing?
@@ -30,6 +40,11 @@ class Secretary < Candidate
   end
 end
 
+####################################
+#
+# class to be tested
+#
+####################################
 class Developer < Candidate
   attr_accessor :programming_languages
   def clever?
@@ -39,6 +54,8 @@ end
 
 #####################################
 
+
+######### RUNNING TESTS #############
 
 specify Candidate do
   she "should be young and motivated"  do
